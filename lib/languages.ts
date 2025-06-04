@@ -43,6 +43,17 @@ type DefKeys =
 type LanguageDefinition = Pick<Language, DefKeys>;
 
 const definitions: Record<LanguageKey, LanguageDefinition> = {
+    fasmg: {
+        name: 'fasmg',
+        monaco: 'asm',
+        extensions: ['.asm', '.inc', '.alm'],
+        alias: ['fasmg', 'flat-assembler-g'],
+        logoUrl: null,
+        logoUrlDark: null,
+        formatter: null,
+        previewFilter: null,
+        monacoDisassembly: null,
+    },
     jakt: {
         name: 'Jakt',
         monaco: 'jakt',
