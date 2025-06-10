@@ -1,3 +1,20 @@
+# compiler-explorer fork that adds support for fasmg
+
+## Instructions
+
+You can configure the paths to the fasmg binary and the include path by
+creating a `fasmg.local.properties` file in the `etc/config` directory. Just
+copy the `fasmg.defaults.properties` file then rename it to
+`fasmg.local.properties` and change the `exe` and `includePath` values.
+
+Run dev server with `make dev`.
+
+---
+
+Original readme under the following divider:
+
+---
+
 [![Build Status](https://github.com/compiler-explorer/compiler-explorer/workflows/Compiler%20Explorer/badge.svg)](https://github.com/compiler-explorer/compiler-explorer/actions?query=workflow%3A%22Compiler+Explorer%22)
 [![codecov](https://codecov.io/gh/compiler-explorer/compiler-explorer/branch/main/graph/badge.svg)](https://codecov.io/gh/compiler-explorer/compiler-explorer)
 
