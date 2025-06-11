@@ -112,3 +112,20 @@ asm-docs:
 		echo "==============================================================================="; \
 		exit 1 \
 	)
+
+# Remove all cache, networks, volumes
+.PHONY: docker-prune
+docker-prune:
+	docker system prune -a --volumes -f
+
+.PHONY: docker-build-image
+docker-build-image:
+	docker build --no-cache -t compiler-explorer-fasmg .
+
+.PHONY: docker-delete-image
+docker-delete-image:
+	docker rmi -f compiler-explorer-fasmg
+
+.PHONY: docker-run
+docker-run:
+	docker run --name compiler-explorer-fasmg -p 80:4567 compiler-explorer-fasmg

@@ -1,0 +1,53 @@
+.git
+.github
+*.log
+.env
+.DS_Store
+out
+build
+.vscode
+.idea
+*.md
+.node-bin
+etc/config/fasmg.local.properties
+cypress
+docs
+test
+.husky
+.devcontainer
+
+# If you change this file, please also modify .prettierignore
+# build generated files
+/.node-bin
+/.npm-updated
+/node_modules
+/out
+/coverage
+
+# generated from opcode docenzier.py scripts
+/asm-docs*
+/etc/scripts/asm-docs*
+
+# user local customizations
+/etc/**/*.local.*
+/lib/storage/data
+
+# IDE project files
+/.idea/shelf
+/.vs
+/nbproject
+*.vscode
+*.code-workspace
+
+# random bits
+f.out
+newrelic_agent.log
+*.heapsnapshot
+*.swp
+
+# approval tests
+*.received.*
+
+# Claude local settings
+.claude/settings.local.json
+.aider*
