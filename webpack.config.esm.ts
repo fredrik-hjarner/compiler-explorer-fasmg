@@ -42,7 +42,7 @@ function log(message: string) {}
 
 log(`compiling for ${isDev ? 'development' : 'production'}.`);
 // Memory limits us in most cases, so restrict parallelism to keep us in a sane amount of RAM
-const parallelism = Math.floor(os.totalmem() / (4 * 1024 * 1024 * 1024)) + 1;
+const parallelism = isDev ? Math.floor(os.totalmem() / (4 * 1024 * 1024 * 1024)) + 1 : 1;
 log(`Limiting parallelism to ${parallelism}`);
 
 const distPath = path.resolve(__dirname, 'out', 'dist');
@@ -56,26 +56,26 @@ const webpackJsHack = '.v57.';
 const plugins: Webpack.WebpackPluginInstance[] = [
     new MonacoEditorWebpackPlugin({
         languages: [
-            'cpp',
-            'go',
-            'pascal',
-            'python',
-            'rust',
-            'swift',
-            'java',
-            'julia',
-            'kotlin',
-            'scala',
-            'ruby',
-            'csharp',
-            'fsharp',
-            'vb',
-            'dart',
-            'typescript',
-            'solidity',
-            'scheme',
-            'objective-c',
-            'elixir',
+            // 'cpp',
+            // 'go',
+            // 'pascal',
+            // 'python',
+            // 'rust',
+            // 'swift',
+            // 'java',
+            // 'julia',
+            // 'kotlin',
+            // 'scala',
+            // 'ruby',
+            // 'csharp',
+            // 'fsharp',
+            // 'vb',
+            // 'dart',
+            // 'typescript',
+            // 'solidity',
+            // 'scheme',
+            // 'objective-c',
+            // 'elixir',
         ],
         filename: isDev ? '[name].worker.js' : `[name]${webpackJsHack}worker.[contenthash].js`,
     }),
@@ -108,17 +108,19 @@ export default {
         filename: isDev ? '[name].js' : `[name]${webpackJsHack}[contenthash].js`,
         path: staticPath,
     },
-    cache: {
-        type: 'filesystem',
-        buildDependencies: {
-            config: [
-                fileURLToPath(import.meta.url),
-                // Depend on the package.json to force a recache if something changes:
-                // this is only because something in Monaco upsets the cache if its version changes
-                path.resolve(__dirname, 'package.json'),
-            ],
-        },
-    },
+    cache: isDev
+        ? {
+              type: 'filesystem',
+              buildDependencies: {
+                  config: [
+                      fileURLToPath(import.meta.url),
+                      // Depend on the package.json to force a recache if something changes:
+                      // this is only because something in Monaco upsets the cache if its version changes
+                      path.resolve(__dirname, 'package.json'),
+                  ],
+              },
+          }
+        : false, // Disable cache entirely for production builds
     resolve: {
         alias: {
             'monaco-editor$': 'monaco-editor/esm/vs/editor/editor.api',
@@ -134,7 +136,7 @@ export default {
         },
     },
     stats: 'normal',
-    devtool: 'source-map',
+    devtool: isDev ? 'source-map' : false,
     optimization: {
         runtimeChunk: 'single',
         splitChunks: {
@@ -151,10 +153,10 @@ export default {
         minimizer: [
             new CssMinimizerPlugin(),
             new TerserPlugin({
-                parallel: true,
+                parallel: isDev,
                 terserOptions: {
                     ecma: 5,
-                    sourceMap: true,
+                    sourceMap: isDev,
                 },
             }),
         ],
@@ -190,11 +192,29 @@ export default {
             {
                 test: /\.ts$/,
                 loader: 'ts-loader',
+                options: isDev
+                    ? {}
+                    : {
+                          transpileOnly: true, // Skip type checking in production
+                          compilerOptions: {
+                              sourceMap: false,
+                              inlineSourceMap: false,
+                              inlineSources: false,
+                              declaration: false,
+                              declarationMap: false,
+                              removeComments: true,
+                          },
+                      },
             },
-            {
-                test: /\.js$/,
-                loader: 'source-map-loader',
-            },
+            // Only include source-map-loader in development
+            ...(isDev
+                ? [
+                      {
+                          test: /\.js$/,
+                          loader: 'source-map-loader',
+                      },
+                  ]
+                : []),
         ],
     },
     plugins: plugins,
